@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     DATABASE_URL: str
-    BACKEND_CORS_ORIGINS: str = "http://localhost:5173"
+    BACKEND_CORS_ORIGINS: str = "http://localhost:4200"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
