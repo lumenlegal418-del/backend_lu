@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import routes_catalogos, routes_movimientos, routes_predicciones, routes_visualizaciones
+from app.api.v1 import routes_catalogos, routes_movimientos, routes_predicciones, routes_visualizaciones,routes_eliminar_informacion,routes_carga
 from app.core.config import settings
 from app.db.base import Base
 from app.db.session import engine
@@ -21,6 +21,8 @@ app.include_router(routes_movimientos.router, prefix=settings.API_V1_STR)
 app.include_router(routes_visualizaciones.router, prefix=settings.API_V1_STR)
 app.include_router(routes_catalogos.router, prefix=settings.API_V1_STR)
 app.include_router(routes_predicciones.router, prefix=settings.API_V1_STR)
+app.include_router(routes_eliminar_informacion.router,prefix=settings.API_V1_STR)
+app.include_router(routes_carga.router,prefix=settings.API_V1_STR)
 
 
 @app.on_event("startup")

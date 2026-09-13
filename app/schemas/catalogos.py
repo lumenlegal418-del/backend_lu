@@ -54,3 +54,28 @@ class ClasificacionNombreCuentaOut(CatalogoOut):
 
 class TipoEgresoOut(CatalogoOut):
     tipo_egreso: str | None = None
+
+class EstadoClienteOut(BaseModel):
+    nombre_tercero: str
+    ano_inicio: str
+    mes_inicio: str
+    ano_fin: str | None = None
+    mes_fin: str | None = None
+    estado: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class RegistrosEgresosOut(BaseModel):
+    id: int
+    nombre_cuenta: str
+    clasificacion_nombre_cuenta: str
+    tipo_egreso: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class EmpleadosOut(BaseModel):
+    id: int
+    nombre_tercero: str
+    tipo_egreso: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)

@@ -96,3 +96,29 @@ class TipoEgreso(Base):
 
     id: Mapped[int] = mapped_column("id", primary_key=True)
     tipo_egreso: Mapped[str | None] = mapped_column("tipo_egreso", String(100), unique=True)
+
+class EstadoCliente(Base):
+    __tablename__ = "estado_cliente"
+
+    id: Mapped[int] = mapped_column("id",primary_key=True,autoincrement=True)
+    nombre_tercero: Mapped[str] = mapped_column("nombre_tercero",String(50),nullable=False)
+    ano_inicio: Mapped[str] = mapped_column("ano_inicio",String(4),nullable=False)
+    mes_inicio: Mapped[str] = mapped_column("mes_inicio",String(50),nullable=False)
+    ano_fin: Mapped[str | None] = mapped_column("ano_fin",String(4),nullable=True)
+    mes_fin: Mapped[str | None] = mapped_column("mes_fin",String(50),nullable=True)
+    estado: Mapped[str] = mapped_column("estado",String(50),nullable=False)
+
+class RegistrosEgresos(Base):
+    __tablename__ = "registros_egresos"
+
+    id: Mapped[int] = mapped_column("id",primary_key=True,autoincrement=True)
+    nombre_cuenta: Mapped[str] = mapped_column("nombre_cuenta",String(50),nullable=False)
+    clasificacion_nombre_cuenta: Mapped[str] = mapped_column("clasificacion_nombre_cuenta",String(50),nullable=False)
+    tipo_egreso: Mapped[str | None] = mapped_column("tipo_egreso",String(50),nullable=True)
+
+class Empleados(Base):
+    __tablename__ = "empleados"
+
+    id: Mapped[int] = mapped_column("id",primary_key=True,autoincrement=True)
+    nombre_tercero: Mapped[str] = mapped_column("nombre_tercero",String(50),nullable=False)
+    tipo_egreso: Mapped[str | None] = mapped_column("tipo_egreso",String(50),nullable=True)

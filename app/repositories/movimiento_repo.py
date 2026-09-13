@@ -1,19 +1,20 @@
 from sqlalchemy import func, select, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import delete, select
 
 from app.models.catalogos import (
-    Ano,
-    Clasificacion,
-    ClasificacionNombreCuenta,
     Documento,
-    Mes,
-    NombreArchivo,
     Terceros,
-    TipoEgreso,
+    Mes,
+    Ano,
+    NombreArchivo,
+    Clasificacion,
     TipoIngreso,
+    ClasificacionNombreCuenta,
+    TipoEgreso,
 )
-from app.models.movimiento import MovimientoContable
 
+from app.models.movimiento import MovimientoContable
 
 class MovimientoRepository:
     """Acceso a datos de MOVIMIENTO_CONTABLE. Los cálculos SQL (SUM/AVG) se hacen en la BD."""

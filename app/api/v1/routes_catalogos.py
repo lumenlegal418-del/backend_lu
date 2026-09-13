@@ -11,6 +11,9 @@ from app.models.catalogos import (
     TipoEgreso,
     TipoIngreso,
     Vigencia,
+    EstadoCliente,
+    RegistrosEgresos,
+    Empleados,
 )
 from app.repositories.movimiento_repo import MovimientoRepository
 from app.schemas.catalogos import (
@@ -21,9 +24,13 @@ from app.schemas.catalogos import (
     TipoEgresoOut,
     TipoIngresoOut,
     VigenciaOut,
+    EstadoClienteOut,
+    RegistrosEgresosOut,
+    EmpleadosOut,
 )
 from app.schemas.movimiento import ArchivoInfo
 from app.services.calculos import CLASIFICACIONES_INGRESO, MESES_ORDEN
+
 
 router = APIRouter(prefix="/catalogos", tags=["catalogos"])
 
@@ -116,3 +123,27 @@ async def listar_archivos(db: AsyncSession = Depends(get_db)):
         )
         for (nombre_archivo, ano), meses in agrupado.items()
     ]
+
+@router.get("/estado-clientes", response_model=list[EstadoClienteOut])
+async def listar_estado_clientes(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(EstadoCliente).order_by(EstadoCliente.id)
+    )
+    return result.scalars().all()
+
+
+@router.get("/registros-egresos", response_model=list[RegistrosEgresosOut])
+async def listar_registros_egresos(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(RegistrosEgresos).order_by(RegistrosEgresos.id)
+    )
+    return result.scalars().all()
+
+
+@router.get("/empleados", response_model=list[EmpleadosOut])
+async def listar_empleados(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(Empleados).order_by(Empleados.id)
+    )
+    return result.scalars().all()
+
