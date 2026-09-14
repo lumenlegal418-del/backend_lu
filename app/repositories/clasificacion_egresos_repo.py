@@ -24,3 +24,31 @@ class ClasificacionEgresosRepository:
             }
             for registro in registros
         ]
+
+    async def crear(self, datos):
+        registro = RegistrosEgresos(**datos)
+
+        self.db.add(registro)
+
+        await self.db.flush()
+        await self.db.refresh(registro)
+
+        return registro
+
+    async def eliminar(self, datos):
+        result = await self.db.execute(
+            select(RegistrosEgresos).where(
+                RegistrosEgresos.nombre_cuenta == datos.nombre_cuenta,
+                RegistrosEgresos.clasificacion_nombre_cuenta == datos.clasificacion_nombre_cuenta,
+                RegistrosEgresos.tipo_egreso == datos.tipo_egreso,
+            )
+        )
+
+        registro = result.scalar_one_or_none()
+
+        if registro is None:
+            return False
+
+        await self.db.delete(registro)
+
+        return True

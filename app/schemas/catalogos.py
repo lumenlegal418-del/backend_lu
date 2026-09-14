@@ -55,6 +55,23 @@ class ClasificacionNombreCuentaOut(CatalogoOut):
 class TipoEgresoOut(CatalogoOut):
     tipo_egreso: str | None = None
 
+
+class EstadoClienteCreate(BaseModel):
+    nombre_tercero: str
+    ano_inicio: str
+    mes_inicio: str
+    ano_fin: str | None = None
+    mes_fin: str | None = None
+    estado: str
+
+class EstadoClienteDelete(BaseModel):
+    nombre_tercero: str
+    ano_inicio: str
+    mes_inicio: str
+    ano_fin: str | None = None
+    mes_fin: str | None = None
+    estado: str
+
 class EstadoClienteOut(BaseModel):
     nombre_tercero: str
     ano_inicio: str
@@ -65,6 +82,17 @@ class EstadoClienteOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+class RegistrosEgresosCreate(BaseModel):
+    nombre_cuenta: str
+    clasificacion_nombre_cuenta: str
+    tipo_egreso: str | None = None
+
+class RegistrosEgresosDelete(BaseModel):
+    nombre_cuenta: str
+    clasificacion_nombre_cuenta: str
+    tipo_egreso: str | None = None
+
 class RegistrosEgresosOut(BaseModel):
     id: int
     nombre_cuenta: str
@@ -72,6 +100,17 @@ class RegistrosEgresosOut(BaseModel):
     tipo_egreso: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+
+
+class EmpleadosCreate(BaseModel):
+    nombre_tercero: str
+    tipo_egreso: str | None = None
+
+class EmpleadosDelete(BaseModel):
+    nombre_tercero: str
+    tipo_egreso: str | None = None
 
 class EmpleadosOut(BaseModel):
     id: int

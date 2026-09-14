@@ -23,3 +23,30 @@ class ClasificacionEmpleadosRepository:
             }
             for registro in registros
         ]
+
+    async def crear(self, datos):
+        registro = Empleados(**datos)
+
+        self.db.add(registro)
+
+        await self.db.flush()
+        await self.db.refresh(registro)
+
+        return registro
+
+    async def eliminar(self, datos):
+        result = await self.db.execute(
+            select(Empleados).where(
+                Empleados.nombre_tercero == datos.nombre_tercero,
+                Empleados.tipo_egreso == datos.tipo_egreso,
+            )
+        )
+
+        registro = result.scalar_one_or_none()
+
+        if registro is None:
+            return False
+
+        await self.db.delete(registro)
+
+        return True
