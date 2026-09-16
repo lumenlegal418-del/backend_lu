@@ -9,15 +9,33 @@ class ClasificacionEmpleadosRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def listar_todos(self):
-        result = await self.db.execute(
-            select(Empleados).order_by(Empleados.id)
-        )
+    async def listar(
+                    self,
+                    id: int |None=None,
+                    nombre_tercero:str | None=None,
+                    tipo_egreso:str | None=None,
+                    
+                    ):
+        query=select(Empleados)
+
+        if id is not None:
+            query=query.where( Empleados.id == id)
+
+        if nombre_tercero is not None: 
+            query = query.where( Empleados.nombre_tercero == nombre_tercero )
+
+        if tipo_egreso is not None: 
+            query = query.where( Empleados.tipo_egreso == tipo_egreso )
+
+        query = query.order_by(Empleados.id)
+
+        result= await self.db.execute(query)
 
         registros = result.scalars().all()
 
         return [
             {
+                "id":registro.id,
                 "nombre_tercero": registro.nombre_tercero,
                 "tipo_egreso": registro.tipo_egreso,
             }

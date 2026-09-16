@@ -1,6 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.repositories.estado_cliente_repo import EstadoClienteRepository
+from app.services.catalogos_service import CatalogosService
+
+from app.schemas.catalogos import EstadoClienteOut
+from app.schemas.catalogos import RegistrosEgresosOut
+from app.schemas.catalogos import EmpleadosOut
 
 from app.db.session import get_db
 from app.models.catalogos import (
@@ -176,18 +183,28 @@ async def listar_archivos(db: AsyncSession = Depends(get_db)):
 # ESTADO CLIENTE
 # ============================================================
 
-@router.get(
-    "/estado-clientes",
-    response_model=list[EstadoClienteOut]
-)
-async def listar_estado_clientes(
-    db: AsyncSession = Depends(get_db)
-):
-    result = await db.execute(
-        select(EstadoCliente).order_by(EstadoCliente.id)
-    )
-
-    return result.scalars().all()
+@router.get( 
+    "/estado-clientes", 
+    response_model=list[EstadoClienteOut] ) 
+async def listar_estado_clientes( 
+    id: int | None = Query(None), 
+    nombre_tercero: str | None = Query(None), 
+    ano_inicio: str | None = Query(None), 
+    mes_inicio: str | None = Query(None), 
+    ano_fin: str | None = Query(None), 
+    mes_fin: str | None = Query(None), 
+    estado: str | None = Query(None),
+    db: AsyncSession = Depends(get_db), 
+    ): 
+    return await CatalogosService.listar_estado_clientes( 
+        db=db, id=id, 
+        nombre_tercero=nombre_tercero, 
+        ano_inicio=ano_inicio, 
+        mes_inicio=mes_inicio, 
+        ano_fin=ano_fin, 
+        mes_fin=mes_fin, 
+        estado=estado, 
+        )
 
 
 @router.post(
@@ -229,18 +246,23 @@ async def eliminar_estado_cliente(
 # REGISTROS EGRESOS
 # ============================================================
 
-@router.get(
-    "/registros-egresos",
-    response_model=list[RegistrosEgresosOut]
-)
+@router.get( 
+    "/registros-egresos", 
+    response_model=list[RegistrosEgresosOut] ) 
 async def listar_registros_egresos(
-    db: AsyncSession = Depends(get_db)
-):
-    result = await db.execute(
-        select(RegistrosEgresos).order_by(RegistrosEgresos.id)
-    )
-
-    return result.scalars().all()
+    id: int | None = Query(None),
+    nombre_cuenta: str | None = Query(None), 
+    clasificacion_nombre_cuenta: str | None = Query(None), 
+    tipo_egreso: str | None = Query(None), 
+    db: AsyncSession = Depends(get_db), 
+    ): 
+    return await CatalogosService.listar_registro_egreso( 
+        db=db,
+        id=id,
+        nombre_cuenta=nombre_cuenta,
+        clasificacion_nombre_cuenta=clasificacion_nombre_cuenta,
+        tipo_egreso=tipo_egreso,
+        )
 
 
 @router.post(
@@ -282,19 +304,21 @@ async def eliminar_registro_egreso(
 # EMPLEADOS
 # ============================================================
 
-@router.get(
-    "/empleados",
-    response_model=list[EmpleadosOut]
-)
+@router.get( 
+    "/empleados", 
+    response_model=list[EmpleadosOut]) 
 async def listar_empleados(
-    db: AsyncSession = Depends(get_db)
-):
-    result = await db.execute(
-        select(Empleados).order_by(Empleados.id)
-    )
-
-    return result.scalars().all()
-
+    id: int | None = Query(None),
+    nombre_tercero: str | None = Query(None), 
+    tipo_egreso: str | None = Query(None),
+    db: AsyncSession = Depends(get_db), 
+    ): 
+    return await CatalogosService.listar_empleado(
+        db=db,
+        id=id,
+        nombre_tercero=nombre_tercero,
+        tipo_egreso=tipo_egreso,
+        ) 
 
 @router.post(
     "/empleados",
