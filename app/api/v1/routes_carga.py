@@ -53,7 +53,7 @@ async def cargar_excel(
 
         # 2. Obtener los estados de los clientes desde PostgreSQL
         repository = EstadoClienteRepository(db)
-        datos_clientes = await repository.listar_todos()
+        datos_clientes = await repository.listar()
 
         # 3. Convertir los datos de clientes a DataFrame
         df_clientes = pd.DataFrame(datos_clientes)
@@ -67,14 +67,14 @@ async def cargar_excel(
         # 5. Obtener clasificación de egresos
         clasificacion_egresos_repo = ClasificacionEgresosRepository(db)
         registros_egresos = (
-            await clasificacion_egresos_repo.listar_todos()
+            await clasificacion_egresos_repo.listar()
         )
 
         # Obtener clasificación de empleados
         clasificacion_empleados_repo = (
             ClasificacionEmpleadosRepository(db)
         )
-        empleados = await clasificacion_empleados_repo.listar_todos()
+        empleados = await clasificacion_empleados_repo.listar()
 
         # 6. Convertir registros de egresos y empleados a DataFrame
         df_egresos = pd.DataFrame(registros_egresos)
