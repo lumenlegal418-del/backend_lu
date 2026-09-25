@@ -118,6 +118,33 @@ class MovimientoRepository:
         )
         result = await self.db.execute(query)
         return list(result.mappings().all())
+    async def historico_por_tipo_egreso(self, *, tipo_egreso: str) -> list:
+        query = (
+            select(
+                Ano.ano.label("ano"),
+                Mes.mes.label("mes"),
+                func.coalesce(
+                    func.sum(MovimientoContable.total), 0
+                ).label("total"),
+            )
+            .join(
+                TipoEgreso,
+                MovimientoContable.id_tipo_egreso == TipoEgreso.id,
+            )
+            .join(
+                Ano,
+                MovimientoContable.id_ano == Ano.id,
+            )
+            .join(
+                Mes,
+                MovimientoContable.id_mes == Mes.id,
+            )
+            .where(TipoEgreso.tipo_egreso == tipo_egreso)
+            .group_by(Ano.ano, Mes.mes)
+        )
+
+        result = await self.db.execute(query)
+        return list(result.mappings().all())
 
     async def totales_por_tipo_egreso(
         self, *, clasificaciones: list[str], ano: str, mes: str

@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-ClasificacionPrediccion = Literal["GASTOS", "COSTOS", "Ingreso fijo", "Ingreso vario"]
+ClasificacionPrediccion = Literal["Egreso variable", "Egreso fijo", "Ingreso fijo", "Ingreso vario"]
 
 
 class PrediccionMes(BaseModel):
