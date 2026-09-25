@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.movimiento import MovimientoContable
@@ -142,6 +142,25 @@ class MovimientoContableRepository:
             str(tipo_egreso).strip(): id_
             for id_, tipo_egreso in resultado.all()
         }
+
+    async def periodo_existe(
+        self,
+        mes: str,
+        ano: str
+    ) -> bool:
+
+        consulta = select(
+            exists().where(
+                MovimientoContable.id_mes == Mes.id,
+                MovimientoContable.id_ano == Ano.id,
+                Mes.mes == mes,
+                Ano.ano == ano
+            )
+        )
+
+        resultado = await self.db.execute(consulta)
+
+        return bool(resultado.scalar())
 
     async def crear_muchos(self, movimientos):
         self.db.add_all(

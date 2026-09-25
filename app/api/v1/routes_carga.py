@@ -2,7 +2,13 @@ import os
 import tempfile
 
 import pandas as pd
-from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import (
+    APIRouter,
+    UploadFile,
+    File,
+    Depends,
+    HTTPException
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
@@ -24,6 +30,8 @@ from app.procesamiento.script_asignacion_tipo_egresos import (
 )
 
 from app.services.carga_catalogos_service import cargar_todo
+
+from app.procesamiento.validador_carga import validar_carga
 
 
 router = APIRouter(
@@ -48,8 +56,18 @@ async def cargar_excel(
         ruta = archivo_temporal.name
 
     try:
+        # 0. Validar archivo
+        await validar_carga(
+            ruta_archivo=ruta,
+            nombre_archivo=archivo.filename,
+            db=db
+        )
+
         # 1. Limpiar y estructurar el Excel
-        resultado = limpiar_datos(ruta, nombre_archivo=archivo.filename)
+        resultado = limpiar_datos(
+            ruta,
+            nombre_archivo=archivo.filename
+        )
 
         # 2. Obtener los estados de los clientes desde PostgreSQL
         repository = EstadoClienteRepository(db)
@@ -66,6 +84,7 @@ async def cargar_excel(
 
         # 5. Obtener clasificación de egresos
         clasificacion_egresos_repo = ClasificacionEgresosRepository(db)
+
         registros_egresos = (
             await clasificacion_egresos_repo.listar()
         )
@@ -74,6 +93,7 @@ async def cargar_excel(
         clasificacion_empleados_repo = (
             ClasificacionEmpleadosRepository(db)
         )
+
         empleados = await clasificacion_empleados_repo.listar()
 
         # 6. Convertir registros de egresos y empleados a DataFrame
@@ -99,8 +119,17 @@ async def cargar_excel(
             "columnas": list(resultado.columns)
         }
 
+    except ValueError as e:
+        # Error producido por una validación
+        await db.rollback()
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
+
     except Exception:
-        # Si algo falla, deshacer todos los cambios
+        # Error inesperado
         await db.rollback()
         raise
 
